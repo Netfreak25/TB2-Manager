@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/flipperdevices/flipperzero-good-faps",
+  "upstream_commit": "efc32b71838d3d5e8d604c1ba7a4793916d5212f",
+  "upstream_origin_commit": "ee70c30014bfd5b85691fb8a219ae436c84e04e8",
+  "upstream_author": "Skorpionm / SkorP",
+  "license": "GPL-3.0",
+  "upstream_archive_sha256": "f3c199dada78636a8bbceef699f3f6de3c9ca7960468b429da6d9fe6704a5f9b",
+  "native_spi_reference_sha256": "61807672d8b75644fab94e9f6d445447e4b05bde883993ed9dba9eda305824b5",
+  "adapted_from": [
+    "flip_tdi/helpers/ftdi.c",
+    "flip_tdi/helpers/ftdi.h",
+    "flip_tdi/helpers/ftdi_bitbang.c",
+    "flip_tdi/helpers/ftdi_bitbang.h",
+    "flip_tdi/helpers/ftdi_gpio.c",
+    "flip_tdi/helpers/ftdi_gpio.h",
+    "flip_tdi/helpers/ftdi_mpsse.c",
+    "flip_tdi/helpers/ftdi_mpsse.h",
+    "flip_tdi/helpers/ftdi_mpsse_data.h",
+    "flip_tdi/helpers/ftdi_usb.c",
+    "flip_tdi/helpers/ftdi_usb.h",
+    "flip_tdi/helpers/ftdi_usb_define.h"
+  ],
+  "local_changes": "MPSSE-only demand-loaded module, external 2 MHz raw SPI bridge, bounded UI and safe USB teardown"
+}

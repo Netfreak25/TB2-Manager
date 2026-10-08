@@ -1,0 +1,8 @@
+# Copy as /ext/apps_data/tb2_manager/builder.conf, then adjust explicitly.
+# No private key values belong here. The RTC is displayed as UTC.
+https_host=tbs2.tonie.cloud
+ici_host=ici.tonie.cloud
+# Optional: expiry for NEW certificates only, UTC YYYYMMDDhhmmss.
+# expires_utc=20360916000000
+# Optional: existing package directory with the documented six filenames.
+# package_dir=/ext/apps_data/tb2_manager/certs

@@ -1,0 +1,28 @@
+TB2 Manager
+
+This application incorporates adaptations of SPI Mem Manager, from
+flipperdevices/flipperzero-good-faps commit efc32b71838d3d5e8d604c1ba7a4793916d5212f.
+The corresponding combined application is distributed under GNU GPL version 3;
+see LICENSE. Upstream copyright and license notices are retained.
+
+src/spi.c adapts the command/worker sequences for W25Q128FV, with bounded IO,
+checked errors, UID binding, persistence checkpoints and retry handling.
+assets/icons/Wiring_SPI_128x64.png is an unchanged upstream graphic.
+Exact provenance and image hash: third_party/spi_mem_manager/provenance.json.
+
+The Core Flasher feature incorporates a reduced MPSSE/USB adaptation of FlipTDI
+by Skorpionm / SkorP from flipperdevices/flipperzero-good-faps. The integration
+is loaded only for a Core Flasher session, uses the existing external 2-MHz SPI pin
+profile and forwards raw SPI transactions without a flash-command policy in firmware. The standalone
+scenes, UART, timer-driven bitbang modes and upstream wiring graphic are not
+included. Exact source/archive provenance is recorded in
+third_party/flip_tdi/provenance.json; the GPLv3 text is retained there.
+
+Mbed TLS, pinned 107ea89daaefb9867ea9121002fbbdf926780e98: Apache-2.0.
+littlefs, pinned adad0fbbcf5382c20978d07f94f9c13be9041c1b: BSD-3-Clause.
+tools/prepare.ps1 obtains these pinned sources for local builds, copies their
+license texts into the ignored dependency tree, and documents the small LittleFS
+mount guard. Generated dependency copies are not stored in this repository.
+
+The Flipper/Unleashed SDK is a separately obtained, pinned build prerequisite.
+No private box dumps, keys, personal settings, or local packages are distributed.

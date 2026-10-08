@@ -1,0 +1,190 @@
+# Both binaries use the same pinned ABI/configuration. The frontend only keeps
+# lightweight configuration/key/job parsers after link-time garbage collection.
+private_libs = [
+    Lib(
+        name="crypto",
+        cdefines=["TB2_PRIVATE_CONFIG_ID=0"],
+        fap_include_paths=["include"],
+        sources=["library/*.c"],
+        cflags=["-Wno-redundant-decls", "-include", "tb2_config_select.h"],
+    ),
+    Lib(
+        name="littlefs",
+        fap_include_paths=["."],
+        sources=["lfs.c", "lfs_util.c"],
+        # Upstream lfs_mlist_isopen is used only inside assert(); FBT sets NDEBUG.
+        cflags=["-Wno-unused-function"],
+        cdefines=["LFS_MULTIVERSION", "LFS_NO_DEBUG", "LFS_NO_WARN", "LFS_NO_ERROR"],
+    ),
+]
+
+App(
+    appid="tb2_probe",
+    name="TB2 Manager",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="tb2_probe_app",
+    requires=["gui", "storage", "dialogs"],
+    sources=[
+        "src/app.c",
+        "src/native_io.c",
+        "src/job.c",
+        "src/server.c",
+        "src/settings.c",
+        "src/reader.c",
+        "src/package.c",
+        "src/workflow.c",
+    ],
+    stack_size=4096,
+    fap_category="Tools",
+    fap_icon="assets/tb2_manager_icon.png",
+    fap_version=(0, 8, 10),
+    fap_description="TB2 dump, modify, flash and raw Core Flasher bridge",
+    fap_author="Moritz",
+    targets=["f7"],
+    fap_private_libs=private_libs,
+    # API 88.4 exports the division helpers; do not duplicate libgcc in RAM.
+    fap_exclude_libs=["gcc"],
+    cdefines=["LFS_MULTIVERSION", "TB2_PRIVATE_CONFIG_ID=0"],
+)
+
+App(
+    appid="tb2_backend",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_backend_entry",
+    requires=["tb2_probe"],
+    sources=[
+        "src/backend.c",
+        "src/image.c",
+        "src/restore.c",
+        "src/job.c",
+        "src/server.c",
+        "src/settings.c",
+        "src/probe.c",
+        "src/reader.c",
+        "src/identity.c",
+        "src/workflow.c",
+    ],
+    fal_embedded=True,
+    fap_private_libs=private_libs,
+    fap_exclude_libs=["gcc"],
+    cdefines=["LFS_MULTIVERSION", "TB2_PRIVATE_CONFIG_ID=0", "TB2_CORE_MODULE"],
+)
+
+App(
+    appid="tb2_cert",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_backend_entry",
+    requires=["tb2_probe"],
+    sources=["src/backend.c", "src/workflow.c", "src/job.c", "src/server.c", "src/settings.c",
+             "src/package.c", "src/reader.c", "src/probe.c"],
+    fal_embedded=True,
+    fap_private_libs=private_libs,
+    fap_exclude_libs=["gcc"],
+    cdefines=["LFS_MULTIVERSION", "TB2_PRIVATE_CONFIG_ID=0", "TB2_CERT_MODULE"],
+)
+
+# Directory/name UI is transient: never resident with the crypto/image backend.
+# Both internal libraries travel inside the single user-facing FAP.
+App(
+    appid="tb2_setup",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_setup_entry",
+    requires=["tb2_probe"],
+    sources=["src/setup.c", "src/ui_store.c", "src/server.c", "src/job.c", "src/workflow.c", "src/package.c", "src/reader.c", "src/operation.c"],
+    fap_private_libs=private_libs,
+    cdefines=["LFS_MULTIVERSION", "TB2_PRIVATE_CONFIG_ID=0"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_spi",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_spi_entry",
+    requires=["tb2_probe"],
+    sources=["src/spi.c", "src/spi_headers.c", "src/identity.c", "src/reader.c", "src/spi_backend.c", "src/spi_operation.c", "src/operation.c", "src/operation_bind.c", "src/job.c", "src/server.c", "src/package.c", "src/workflow.c"],
+    fap_private_libs=private_libs,
+    cdefines=["LFS_MULTIVERSION", "TB2_PRIVATE_CONFIG_ID=0"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_aux",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_setup_entry",
+    requires=["tb2_probe"],
+    sources=["src/setup.c", "src/ui_store.c", "src/server.c", "src/job.c", "src/package.c"],
+    fap_icon_assets="assets/icons",
+    fap_private_libs=private_libs,
+    cdefines=["TB2_PRIVATE_CONFIG_ID=0", "TB2_AUX_MODULE"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_fliptdi",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_fliptdi_entry",
+    requires=["tb2_probe"],
+    sources=[
+        "src/fliptdi_bridge.c",
+        "src/fliptdi/ftdi.c",
+        "src/fliptdi/ftdi_usb.c",
+        "src/fliptdi/ftdi_bitbang.c",
+        "src/fliptdi/ftdi_gpio.c",
+        "src/fliptdi/ftdi_mpsse.c",
+        "src/fliptdi/tb2_spi_backend.c",
+    ],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_export",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_export_entry",
+    requires=["tb2_probe"],
+    sources=["src/export_backend.c", "src/archive.c", "src/operation.c", "src/job.c", "src/review.c", "src/review_ui.c", "src/package.c", "src/server.c"],
+    fap_private_libs=private_libs,
+    cdefines=["TB2_PRIVATE_CONFIG_ID=0"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_store",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_store_entry",
+    requires=["tb2_probe"],
+    sources=["src/store_backend.c", "src/store.c", "src/record_io.c", "src/records.c", "src/record_uid.c", "src/setup_config.c", "src/editions.c", "src/file_version.c",
+             "src/record_objects.c", "src/record_delete.c", "src/record_tasks.c", "src/record_archive.c", "src/record_import.c", "src/workshop.c", "src/job.c", "src/store_key_file.c", "src/store_preflight.c", "src/setup_status.c", "src/ui_store.c", "src/server.c"],
+    fap_private_libs=private_libs,
+    cdefines=["LFS_MULTIVERSION", "TB2_PRIVATE_CONFIG_ID=0"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_boxes",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_boxes_entry",
+    requires=["tb2_probe"],
+    sources=["src/boxes.c", "src/record_io.c", "src/records.c", "src/file_version.c", "src/job.c", "src/server.c", "src/package.c"],
+    fap_private_libs=private_libs,
+    cdefines=["TB2_PRIVATE_CONFIG_ID=0"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)
+
+App(
+    appid="tb2_imports",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="tb2_imports_entry",
+    requires=["tb2_probe"],
+    sources=["src/imports_ui.c", "src/headers_ui.c", "src/ui_store.c", "src/job.c", "src/file_version.c", "src/reader.c", "src/server.c", "src/settings.c"],
+    fap_private_libs=private_libs,
+    cdefines=["TB2_PRIVATE_CONFIG_ID=0"],
+    fal_embedded=True,
+    fap_exclude_libs=["gcc"],
+)

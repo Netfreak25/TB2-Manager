@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/flipperdevices/flipperzero-good-faps",
+  "commit": "efc32b71838d3d5e8d604c1ba7a4793916d5212f",
+  "license": "GPL-3.0",
+  "adapted_from": [
+    "spi_mem_manager/lib/spi/spi_mem_tools.c",
+    "spi_mem_manager/lib/spi/spi_mem_worker_modes.c"
+  ],
+  "wiring_sha256": "de8e83ca3388eca019527f679be7dd1b14ccf30dc163dd27275e5a9c8ff88a39"
+}

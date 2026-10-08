@@ -1,0 +1,16 @@
+{
+  "reference": "0.2.1 artifact baseline plus bounded 1 KiB path-feature allowance; 0.4.2 completed on target. Artifact ceilings, NOT available device RAM",
+  "reference_sha256": "20a1bd3b77f11460bc465887f74ec358f65d401ea4c876bb476b1c3006a6cfba",
+  "resident_payload_max": 106000,
+  "resident_budget_note": "Original processing and browser ceilings retained; Artifact sizes do not measure total runtime heap.",
+  "preload_payload_max": 120147,
+  "largest_section_max": 85476,
+  "browser_payload_max": 32768,
+  "backend_section_max": 49152,
+  "backend_preload_max": 92160,
+  "store_preload_max": 65536,
+  "store_phase_payload_max": 106000,
+  "backend_cached_symbols_max": 32,
+  "backend_budget_note": "90 KiB payload cap leaves >=12936 bytes versus the 105096-byte backend_before sample in job 6aabcee1-60138d9d. Required engineering reserve for loader/runtime overhead, NOT a measured or guaranteed peak. Streamed symbol cache separately capped.",
+  "sdk_commit": "3c9be0fdd9d301a9436765099a2d1780b36a1795"
+}
